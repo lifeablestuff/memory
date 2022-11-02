@@ -13,24 +13,24 @@ class window(Fl_Window):
 		self.begin()
 		self.butlist = []
 		x = 0
-		I=[]
-		fnames=os.listdir('marvel_pics')
-		fnames=fnames+fnames
-		random.shuffle(fnames)
-		imgs=[]
-		for fname in fnames:
-			imgs.append(self.img_resize(f'./marvel_pics/{fname}',150))
+		self.I=[]
+		self.fnames=os.listdir('marvel_pics')
+		self.fnames=self.fnames+self.fnames
+		random.shuffle(self.fnames)
+		self.imgs=[]
+		for fname in self.fnames:
+			self.imgs.append(self.img_resize(f'./marvel_pics/{fname}',120))
 			#imgs.append(Fl_PNG_Image(f'./marvel_pics/{fname}').copy(150,150))
-		for row in range(6):
-			for col in range(4):
-				but=Fl_Button(col*150,row*150,150,150)
+		for row in range(4):
+			for col in range(6):
+				but=Fl_Button(col*120,row*120,120,120)
 				but.color(FL_BACKGROUND2_COLOR)
-				marvel=self.img_resize('marvel.png',150)
-				but.image(marvel)
+				self.marvel=self.img_resize('marvel.png',120)
+				but.image(self.marvel)
 				but.clear_visible_focus()
-				but.callback(show)
-				x+=1
-				buttons.append(but)
+				but.callback(self.reveal)
+				self.butlist.append(but)
+		self.show()
 	
 	# mr ark's code start
 	def img_resize(self,fname,width):
@@ -47,44 +47,43 @@ class window(Fl_Window):
 		return Fl_PNG_Image(None, mem.getbuffer(), siz)
 	# mr ark code end
 
-	def show(self,w):
-		i=buttons.index(w)
-		if i in I: 
+	def reveal(self,w):
+		i=self.butlist.index(w)
+		if i in self.I: 
 			#do nothing if same button. 
 			return
 
-		I.append(i)
-		w.image(imgs[i]) #show image
+		self.I.append(i)
+		w.image(self.imgs[i]) #show image
 		w.redraw()
 		  
 		#check if same image
-		if len(I)==2:
-			if fnames[I[0]]==fnames[I[1]]:
-				buttons[I[0]].deactivate()
-				buttons[I[0]].image().inactive()
-				buttons[I[1]].deactivate()
-				buttons[I[1]].image().inactive()
-				I.clear()
-		elif len(I)==3:
-			buttons[I[1]].image(marvel)
-			buttons[I[1]].redraw()
-			buttons[I[0]].image(marvel)
-			buttons[I[0]].redraw()
-			I.pop(1)
-			I.pop(0)#order matters. Must remove in reverse order
+		if len(self.I)==2:
+			if self.fnames[self.I[0]]==self.fnames[self.I[1]]:
+				self.butlist[self.I[0]].deactivate()
+				self.butlist[self.I[0]].image().inactive()
+				self.butlist[self.I[1]].deactivate()
+				self.butlist[self.I[1]].image().inactive()
+				self.I.clear()
+		elif len(self.I)==3:
+			self.butlist[self.I[1]].image(self.marvel)
+			self.butlist[self.I[1]].redraw()
+			self.butlist[self.I[0]].image(self.marvel)
+			self.butlist[self.I[0]].redraw()
+			self.I.pop(1)
+			self.I.pop(0)#order matters. Must remove in reverse order
 
 		#check if win
 		win=True
-		for but in buttons:
-			  if but.active():
-					win=False
-					break
+		for but in self.butlist:
+			if but.active():
+				win=False
+				break
 		if win:
 			fl_message('You Win!')
 
 				
 
 
-app = window(600,400,'test')
-app.show()
+app = window(720,480,'test')
 Fl.run()
